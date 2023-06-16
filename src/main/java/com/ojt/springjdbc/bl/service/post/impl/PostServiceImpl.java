@@ -20,12 +20,13 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public List<PostDTO> getAllPosts() {
-		String sql = "SELECT * FROM posts";
+		String sql = "SELECT * FROM posts order by id desc";
 		List<Post> posts = jdbcTemplate.query(sql, (rs, rowNum) -> {
 			Post post = new Post();
 			post.setId(rs.getInt("id"));
 			post.setTitle(rs.getString("title"));
 			post.setDescription(rs.getString("description"));
+			post.setCreated_at(rs.getTimestamp("created_at"));
 			return post;
 		});
 
@@ -48,6 +49,7 @@ public class PostServiceImpl implements PostService {
 			post.setId(rs.getInt("id"));
 			post.setTitle(rs.getString("title"));
 			post.setDescription(rs.getString("description"));
+			post.setCreated_at(rs.getTimestamp("created_at"));
 			return post;
 		});
 		

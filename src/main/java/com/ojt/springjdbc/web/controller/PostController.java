@@ -24,14 +24,14 @@ public class PostController {
 	@RequestMapping("/posts/list")
 	public ModelAndView getAllPosts() {
 		List<PostDTO> postDtoList = this.postService.getAllPosts();
-		ModelAndView mv = new ModelAndView("posts/list");
+		ModelAndView mv = new ModelAndView("postListView");
 		mv.addObject("posts", postDtoList);
 		return mv;
 	}
 
 	@RequestMapping("/posts/create")
 	public ModelAndView createPost() {
-		ModelAndView mv = new ModelAndView("posts/create");
+		ModelAndView mv = new ModelAndView("addPostView");
 		mv.addObject("postForm", new PostForm());
 		return mv;
 	}
@@ -40,7 +40,7 @@ public class PostController {
 	public ModelAndView storePost(@ModelAttribute("postForm") @Valid PostForm postForm, BindingResult bindingResult) {
 		ModelAndView mv = new ModelAndView();
 		if (bindingResult.hasErrors()) {
-			mv.setViewName("posts/create");
+			mv.setViewName("addPostView");
 			return mv;
 		}
 
@@ -52,7 +52,7 @@ public class PostController {
 	@RequestMapping("/posts/edit")
 	public ModelAndView editPost(@RequestParam("id") Long id) {
 		PostDTO postDTO = this.postService.getPostById(id);
-		ModelAndView mv = new ModelAndView("posts/edit");
+		ModelAndView mv = new ModelAndView("editPostView");
 		mv.addObject("postForm", new PostForm(postDTO));
 		return mv;
 	}
@@ -61,7 +61,7 @@ public class PostController {
 	public ModelAndView update(@ModelAttribute("postForm") @Valid PostForm postForm, BindingResult bindingResult) {
 		ModelAndView mv = new ModelAndView();
 		if (bindingResult.hasErrors()) {
-			mv.setViewName("posts/edit");
+			mv.setViewName("editPostView");
 			return mv;
 		}
 
@@ -80,7 +80,7 @@ public class PostController {
 	@RequestMapping("/posts/search")
     public ModelAndView searchPosts(@RequestParam("keyword") String search) {
 		List<PostDTO> postDtoList = this.postService.searchPosts(search);
-		ModelAndView mv = new ModelAndView("posts/list");
+		ModelAndView mv = new ModelAndView("postListView");
 		mv.addObject("posts", postDtoList);
 		return mv;
     }
