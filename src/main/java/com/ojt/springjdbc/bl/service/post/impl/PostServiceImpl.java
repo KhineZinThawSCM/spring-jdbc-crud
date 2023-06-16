@@ -2,6 +2,7 @@ package com.ojt.springjdbc.bl.service.post.impl;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.ojt.springjdbc.bl.dto.PostDTO;
 import com.ojt.springjdbc.bl.service.post.PostService;
+import com.ojt.springjdbc.persistence.entity.Post;
 import com.ojt.springjdbc.web.form.PostForm;
 
 @Service
@@ -19,13 +21,15 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public List<PostDTO> getAllPosts() {
 		String sql = "SELECT * FROM posts";
-		return jdbcTemplate.query(sql, (rs, rowNum) -> {
-			PostDTO post = new PostDTO();
+		List<Post> posts = jdbcTemplate.query(sql, (rs, rowNum) -> {
+			Post post = new Post();
 			post.setId(rs.getInt("id"));
 			post.setTitle(rs.getString("title"));
 			post.setDescription(rs.getString("description"));
 			return post;
 		});
+
+		return posts.stream().map(item -> new PostDTO(item)).collect(Collectors.toList());
 	}
 
 	@Override
@@ -39,13 +43,17 @@ public class PostServiceImpl implements PostService {
 	@Override
 	public PostDTO getPostById(Long id) {
 		String sql = "SELECT * FROM posts WHERE id=?";
-		return jdbcTemplate.queryForObject(sql, new Object[] { id }, (rs, rowNum) -> {
-			PostDTO post = new PostDTO();
+		Post postData = jdbcTemplate.queryForObject(sql, new Object[] { id }, (rs, rowNum) -> {
+			Post post = new Post();
 			post.setId(rs.getInt("id"));
 			post.setTitle(rs.getString("title"));
 			post.setDescription(rs.getString("description"));
 			return post;
 		});
+		
+		return new PostDTO(postData);
+		
+		
 	}
 
 	@Override
@@ -65,13 +73,15 @@ public class PostServiceImpl implements PostService {
 	public List<PostDTO> searchPosts(String search) {
 		String sql = "SELECT * FROM posts WHERE title LIKE ? OR description LIKE ?";
         String searchPattern = "%" + search + "%";
-        return jdbcTemplate.query(sql, new Object[]{searchPattern, searchPattern}, (rs, rowNum) -> {
-            PostDTO post = new PostDTO();
+        List<Post> posts =  jdbcTemplate.query(sql, new Object[]{searchPattern, searchPattern}, (rs, rowNum) -> {
+            Post post = new Post();
             post.setId(rs.getInt("id"));
             post.setTitle(rs.getString("title"));
             post.setDescription(rs.getString("description"));
             return post;
         });
+        
+        return posts.stream().map(item -> new PostDTO(item)).collect(Collectors.toList());
 	}
 
 }
